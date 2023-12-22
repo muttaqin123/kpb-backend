@@ -309,6 +309,19 @@ const fileSertifBenih = multer.diskStorage({
     }
 })
 
+const fileKlinikPerkebunan = multer.diskStorage({
+    filename: async function (req, file, cb) {
+        let ext = file.originalname.substring(
+            file.originalname.lastIndexOf("."),
+            file.originalname.length
+        )
+        cb(null, Date.now() + randomString.generate(7) + ext)
+    },
+    destination: async function (req, file, cb) {
+        cb(null, './public/file_klinik')
+    }
+})
+
 const fileUniversitas = multer.diskStorage({
     filename: async function (req, file, cb) {
         let ext = file.originalname.substring(
@@ -452,4 +465,4 @@ const aturSendiri = async (tanggal) => {
     const date = await prisma.$queryRawUnsafe(`SELECT TIMESTAMP WITH TIME ZONE '${tanggal} ${jam === '' ? '00:00:' : jam}+07' AT TIME ZONE 'Asia/Jakarta' as tanggal`)
     return date[0].tanggal
 }
-module.exports = { response, sekarang, imgLayanan, imgFitur, fileKur, fileSyarat, fileSarpras, fileAsuransi, uploadFiles, fileBuktiTransfer, fileAlsintan, fileMaterialMaster, cekNull, fileSertifBenih, fileUniversitas, filePengajuan, fileOkkpd, profileDokter, optPengaduan, optInformasi, fileUpload, optPengaduanDpi, fileSijelabat, aturSendiri }
+module.exports = { response, sekarang, imgLayanan, imgFitur, fileKur, fileSyarat, fileSarpras, fileAsuransi, uploadFiles, fileBuktiTransfer, fileAlsintan, fileMaterialMaster, cekNull, fileSertifBenih, fileUniversitas, filePengajuan, fileOkkpd, profileDokter, optPengaduan, optInformasi, fileUpload, optPengaduanDpi, fileSijelabat, aturSendiri, fileKlinikPerkebunan }

@@ -68,6 +68,11 @@ app.use(
 );
 
 app.use(
+    `${apiVersion}/file-klinik`,
+    express.static(path.join(__dirname, "public/file_klinik"))
+);
+
+app.use(
     `${apiVersion}/file-rut`,
     express.static(path.join(__dirname, "public/file_kur"))
 );
@@ -147,6 +152,7 @@ app.use(`${apiVersion}/alokasi`, require('./routes/Alokasi'))
 app.use(`${apiVersion}/opt`, require('./routes/OPT'))
 app.use(`${apiVersion}/duta`, require('./routes/Duta'))
 app.use(`${apiVersion}/sijelabat`, require('./routes/Sijelabat'))
+app.use(`${apiVersion}/klinik`, require('./routes/KlinikPerkebunan'))
 
 prisma.$connect().then(() => { console.log('Database Conected') }).catch(() => { console.log('Database NOT Conected') })
 
