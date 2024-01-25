@@ -4,6 +4,7 @@
   "description": "API E-KPB",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dwi Romadon S.Kom., M.TI",

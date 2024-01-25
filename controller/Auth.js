@@ -483,9 +483,9 @@ const cekMember = (nik) =>
             })
     })
 
-const findUsers = (nik, password) =>
+const findUsers = (username, password) =>
     new Promise(async (resolve, reject) => {
-        await prisma.users_login.findMany({ where: { nik: nik } })
+        await prisma.users_login.findMany({ where: { username: username } })
             .then((users) => {
                 if (users.length == 0) {
                     reject(response.errorWithData('Username tidak terdaftar', 400));

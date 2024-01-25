@@ -203,6 +203,14 @@ const filterData = (query) => {
             isDate: true
         })
     }
+    if (query.tanggal_kunjungan !== "null" && query.tanggal_kunjungan !== undefined && query.tanggal_kunjungan !== "") {
+        newQuery.push({
+            field: `tanggal_kunjungan`,
+            val: query.tanggal_kunjungan,
+            isNumber: false,
+            isDate: true
+        })
+    }
     return newQuery;
 };
 

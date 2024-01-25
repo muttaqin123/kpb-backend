@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const { response, sekarang, cekNull } = require('../utils/utils');
+const helpers = require('../helpers/Helpers')
 
 exports.addPengajuan = async (req, res) => {
   try {
@@ -58,50 +59,43 @@ exports.addPengajuan = async (req, res) => {
 
 exports.getAllPengajuan = async (req, res) => {
   try {
+    let query, total
+    const key = req.query.filter
+    const page = req.query.page
+    const perpage = req.query.perpage
+    let newQuery = helpers.filterData(req.query);
+    let querys = helpers.convertQuery(newQuery)
+
     const role = req.params.role
     const type = req.params.type
+    const kecamatanFilter = req.query.kecamatan ? `AND kecamatan ILIKE '%${req.query.kecamatan}%'` : '';
+    const komoditasFilter = req.query.komoditas ? `AND komoditas ILIKE '%${req.query.komoditas}%'` : '';
 
-    const disbunkab = () => {
+    if(role === 'disbunkabupaten'){
       if (type === 'terbaru'){
-        return {
-          OR: [
-            { status: 'Belum Dijawab' },
-            { status: 'Verifikasi UPTD' }
-          ]
-        }
-      } else {
-        return {
-          OR: [
-            { status: 'Belum Dijawab' },
-            { status: 'Terjawab' },
-            { status: 'Verifikasi UPTD' }
-          ]
-        }
+        query = await prisma.$queryRawUnsafe(`SELECT * FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ORDER BY id desc limit ${Number(perpage)} OFFSET ${(Number(page) - 1) * Number(perpage)}`)
+
+        total = await prisma.$queryRawUnsafe(`SELECT count(*) FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter}`)
+      }else{
+        query = await prisma.$queryRawUnsafe(`SELECT * FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab' or STATUS ='Terjawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ORDER BY id desc limit ${Number(perpage)} OFFSET ${(Number(page) - 1) * Number(perpage)}`)
+
+        total = await prisma.$queryRawUnsafe(`SELECT count(*) FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab' or STATUS ='Terjawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter}`)
       }
-    }
-    const disbunprov = () => {
+    }else{
       if (type === 'terbaru'){
-        return {
-      status: 'Verifikasi UPTD'
-        }
-      } else {
-        return {
-          OR: [
-            { status: 'Belum Dijawab' },
-            { status: 'Terjawab' },
-            { status: 'Verifikasi UPTD' }
-          ]
-        }
+        query = await prisma.$queryRawUnsafe(`SELECT * FROM klinik_perkebunan WHERE STATUS = 'Verifikasi UPTD' AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ${komoditasFilter} ORDER BY id desc limit ${Number(perpage)} OFFSET ${(Number(page) - 1) * Number(perpage)}`)
+
+        total = await prisma.$queryRawUnsafe(`SELECT count(*) FROM klinik_perkebunan WHERE STATUS = 'Verifikasi UPTD' AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ${komoditasFilter}`)
+      }else{
+        query = await prisma.$queryRawUnsafe(`SELECT * FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab' or STATUS ='Terjawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ${komoditasFilter} ORDER BY id desc limit ${Number(perpage)} OFFSET ${(Number(page) - 1) * Number(perpage)}`)
+
+        total = await prisma.$queryRawUnsafe(`SELECT count(*) FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab' or STATUS ='Terjawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ${komoditasFilter}`)
       }
     }
 
-    let data = await prisma.klinik_perkebunan.findMany({
-      orderBy: {
-        id: 'desc'
-      },
-      where: role === 'disbunkabupaten' ? disbunkab() : disbunprov()
-    })
-    res.json(response.successWithData(data, 201))
+    console.log(req.query)
+
+    res.json(response.commonSuccessDataPaginate(query, total[0].count, Number(page), Number(perpage), key))
   } catch (error) {
     console.log(error);
     res.status(500).json(response.error)
