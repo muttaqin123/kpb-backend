@@ -93,8 +93,6 @@ exports.getAllPengajuan = async (req, res) => {
       }
     }
 
-    console.log(req.query)
-
     res.json(response.commonSuccessDataPaginate(query, total[0].count, Number(page), Number(perpage), key))
   } catch (error) {
     console.log(error);
