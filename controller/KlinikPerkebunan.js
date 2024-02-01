@@ -103,9 +103,17 @@ exports.getAllPengajuan = async (req, res) => {
 exports.getAllPengjuanByNik = async (req, res) => {
   try {
     const nik = req.params.nik
+    const komoditas = req.params.komoditas
+    const intensitas = req.params.intensitas
+    const status = req.params.status
+    const terbaru = req.params.terbaru
     let data = await prisma.klinik_perkebunan.findMany({
       where: {
-        nik: nik
+        nik: nik,
+        komoditas: komoditas,
+        intensitas: intensitas,
+        status: status,
+        terbaru: terbaru
       },
       orderBy: {
         id: 'desc'
