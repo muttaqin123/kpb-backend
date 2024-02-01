@@ -107,17 +107,25 @@ exports.getAllPengjuanByNik = async (req, res) => {
     const intensitas = req.params.intensitas
     const status = req.params.status
     const terbaru = req.params.terbaru
+    const textsearch = req.params.textsearch
     let data = await prisma.klinik_perkebunan.findMany({
       where: {
         nik: nik,
         komoditas: komoditas,
         intensitas: intensitas,
         status: status,
-        terbaru: terbaru
+        OR: [
+          {
+            nama: {
+              contains: textsearch,
+            },
+          },
+        ],
       },
       orderBy: {
-        id: 'desc'
-      }
+        created_at: terbaru === 'Ya' ? 'desc' : 'asc',
+        id: 'desc',
+      },
     })
     res.json(response.successWithData(data, 202))
   } catch (error) {
