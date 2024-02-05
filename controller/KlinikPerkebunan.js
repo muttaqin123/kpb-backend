@@ -73,13 +73,13 @@ exports.getAllPengajuan = async (req, res) => {
 
     if(role === 'disbunkabupaten'){
       if (type === 'terbaru'){
-        query = await prisma.$queryRawUnsafe(`SELECT * FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ORDER BY id desc limit ${Number(perpage)} OFFSET ${(Number(page) - 1) * Number(perpage)}`)
+        query = await prisma.$queryRawUnsafe(`SELECT * FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ${komoditasFilter} ORDER BY id desc limit ${Number(perpage)} OFFSET ${(Number(page) - 1) * Number(perpage)}`)
 
-        total = await prisma.$queryRawUnsafe(`SELECT count(*) FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter}`)
+        total = await prisma.$queryRawUnsafe(`SELECT count(*) FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ${komoditasFilter}`)
       }else{
-        query = await prisma.$queryRawUnsafe(`SELECT * FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab' or STATUS ='Terjawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ORDER BY id desc limit ${Number(perpage)} OFFSET ${(Number(page) - 1) * Number(perpage)}`)
+        query = await prisma.$queryRawUnsafe(`SELECT * FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab' or STATUS ='Terjawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ${komoditasFilter} ORDER BY id desc limit ${Number(perpage)} OFFSET ${(Number(page) - 1) * Number(perpage)}`)
 
-        total = await prisma.$queryRawUnsafe(`SELECT count(*) FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab' or STATUS ='Terjawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter}`)
+        total = await prisma.$queryRawUnsafe(`SELECT count(*) FROM klinik_perkebunan WHERE (STATUS = 'Verifikasi UPTD' or STATUS = 'Belum Dijawab' or STATUS ='Terjawab') AND CAST(tanggal_kunjungan AS TEXT) ILIKE '%${req.query.tanggal_kunjungan}%' ${kecamatanFilter} ${komoditasFilter}`)
       }
     }else{
       if (type === 'terbaru'){
