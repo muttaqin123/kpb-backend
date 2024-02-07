@@ -103,11 +103,11 @@ exports.getAllPengajuan = async (req, res) => {
 exports.getAllPengjuanByNik = async (req, res) => {
   try {
     const nik = req.params.nik
-    const komoditas = req.params.komoditas
-    const intensitas = req.params.intensitas
-    const status = req.params.status
-    const terbaru = req.params.terbaru
-    const textsearch = req.params.textsearch
+    const komoditas = req.query.komoditas
+    const intensitas = req.query.intensitas
+    const status = req.query.status
+    const terbaru = req.query.terbaru
+    const textsearch = req.query.textsearch
     let data = await prisma.klinik_perkebunan.findMany({
       where: {
         nik: nik,
